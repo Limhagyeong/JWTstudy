@@ -69,7 +69,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        cookie.setHttpOnly(true); // 클라이언트단에서 js로 접근 할 수 없도록 함 => XSS 방지
+        cookie.setHttpOnly(true);
 
         return cookie;
     }
