@@ -1,4 +1,4 @@
-package dto;
+package com.hg.springJWT.dto;
 
 import lombok.Data;
 

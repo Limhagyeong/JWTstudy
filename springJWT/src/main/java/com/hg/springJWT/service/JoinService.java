@@ -1,8 +1,8 @@
 package com.hg.springJWT.service;
 
 import com.hg.springJWT.repository.UserRepository;
-import dto.JoinDTO;
-import entity.UserEntity;
+import com.hg.springJWT.dto.JoinDTO;
+import com.hg.springJWT.entity.UserEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.hg.springJWT.repository;
 
-import entity.UserEntity;
+import com.hg.springJWT.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {

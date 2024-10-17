@@ -1,10 +1,12 @@
 package com.hg.springJWT.controller;
 
 import com.hg.springJWT.service.JoinService;
-import dto.JoinDTO;
+import com.hg.springJWT.dto.JoinDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 @Controller
 @ResponseBody
