@@ -1,5 +1,6 @@
 package com.hg.springJWT.config;
 
+import com.hg.springJWT.jwt.CustomLogoutFilter;
 import com.hg.springJWT.jwt.JWTFilter;
 import com.hg.springJWT.jwt.JWTUtil;
 import com.hg.springJWT.jwt.LoginFilter;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -28,7 +30,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil,RefreshRepository refreshRepository){
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository){
         this.authenticationConfiguration=authenticationConfiguration;
         this.jwtUtil=jwtUtil;
         this.refreshRepository=refreshRepository;
@@ -92,10 +94,13 @@ public class SecurityConfig {
 
         // 커스텀 필터 등록
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class); // 로그인 수행 전 토큰이 발급되도록 등록
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil,refreshRepository), LogoutFilter.class); // 기존 로그아웃 필터 앞에 등록
 
         // 세션 설정
         http
