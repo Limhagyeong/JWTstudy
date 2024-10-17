@@ -3,6 +3,7 @@ package com.hg.springJWT.config;
 import com.hg.springJWT.jwt.JWTFilter;
 import com.hg.springJWT.jwt.JWTUtil;
 import com.hg.springJWT.jwt.LoginFilter;
+import com.hg.springJWT.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +26,12 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil){
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,JWTUtil jwtUtil,RefreshRepository refreshRepository){
         this.authenticationConfiguration=authenticationConfiguration;
         this.jwtUtil=jwtUtil;
+        this.refreshRepository=refreshRepository;
     }
 
     @Bean
@@ -92,7 +95,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         // 세션 설정
         http
