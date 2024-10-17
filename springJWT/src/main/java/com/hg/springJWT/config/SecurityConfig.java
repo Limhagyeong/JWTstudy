@@ -1,5 +1,6 @@
 package com.hg.springJWT.config;
 
+import com.hg.springJWT.jwt.JWTFilter;
 import com.hg.springJWT.jwt.JWTUtil;
 import com.hg.springJWT.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
@@ -60,6 +61,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         // 커스텀 필터 등록
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
