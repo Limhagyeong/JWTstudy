@@ -2,8 +2,10 @@ package com.hg.springJWT.jwt;
 
 import com.hg.springJWT.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,8 +45,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
         // username
-        CustomUserDetails customUserDetails= (CustomUserDetails) authentication.getPrincipal();
-        String username= customUserDetails.getUsername();
+        String username=authentication.getName();
 
         // role
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -54,12 +55,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 토큰 생성 메소드
-        String token = jwtUtil.createJwt(username, role, 60*60*10L);
+        String access=jwtUtil.createJwt("access",username,role,600000L);
+        String refresh=jwtUtil.createJwt("refresh",username,role,86400000L);
 
-        // 헤더에 담아 응답
-        response.addHeader("Authorization", "Bearer " + token);
+        // 응답 생성
+        response.addHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
     }
 
+    // 쿠키 생성
+    private Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60);
+        cookie.setHttpOnly(true); // 클라이언트단에서 js로 접근 할 수 없도록 함 => XSS 방지
+
+        return cookie;
+    }
 
     // 로그인 실패 시 실행 메소드
     @Override
